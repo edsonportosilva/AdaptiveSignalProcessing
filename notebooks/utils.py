@@ -186,9 +186,9 @@ def genConvGIF(
 
 
     # Initial stem plots
-    markerline1, stemlines1, baseline1 = ax.stem(k, h, 'k', basefmt=" ", label=ylabel[1])
-    markerline2, stemlines2, baseline2 = ax.stem(k, np.zeros(h.shape), 'b', basefmt=" ", label=ylabel[0])
-    markerline3, stemlines3, baseline3 = ax.stem(k, np.zeros(h.shape), 'r', basefmt=" ", label=ylabel[2])
+    markerline1, stemlines1, baseline1 = ax.stem(k, h, 'k', basefmt=" ", label=ylabel[1], markerfmt='o')
+    markerline2, stemlines2, baseline2 = ax.stem(k, np.zeros(h.shape), 'b', basefmt=" ", label=ylabel[0], markerfmt='s')
+    markerline3, stemlines3, baseline3 = ax.stem(k, np.zeros(h.shape), 'r', basefmt=" ", label=ylabel[2], markerfmt='D')
     
     markerline1.set_markersize(4)
     stemlines1.set_linewidth(1)
