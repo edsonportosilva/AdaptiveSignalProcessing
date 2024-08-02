@@ -131,6 +131,33 @@ def roll_zeropad(a, shift, axis=None):
         return res
     
 
+def discreteConvolution(x, h, steps, D=1):
+    """
+    Perform discrete convolution between input signal x and impulse response h.
+
+    Parameters
+    ----------
+    x : array-like
+        Input signal.
+    h : array-like
+        Impulse response.
+    steps : int
+        Number of steps to perform the convolution.
+    D : int, optional
+        Delay parameter (default=1).
+
+    Returns
+    -------
+    array
+        Convolved signal.
+
+    """
+    x = np.flip(x)
+    y = []
+    for ind in range(1, steps + 1):
+        y.append(np.dot(h, roll_zeropad(x, -(D - ind))))
+
+    return np.array(y)
 def discreteConvolution(x, h, steps, D=1):  
     x = np.flip(x)   
     y = []
