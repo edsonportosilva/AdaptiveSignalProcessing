@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 from matplotlib import rc
 import numpy as np
 from matplotlib.animation import FuncAnimation
+from IPython.display import Math, Latex, display
+import sympy as sp
 
 def set_preferences():
 
@@ -296,4 +298,33 @@ def genConvGIF(
 
     return None
 
-### I want a plot function that I can use to plot stem lines but that I can use to update such lines in an animation
+def symdisp(expr, var=None, unit=None, numDig=None):
+    """
+    Display sympy expressions in Latex style.
+
+    :param expr: The expression to be displayed in Latex style. It can be a string or a sympy expression.
+    :param var: The sympy variable, function, or expression associated with the expression. (default: None)
+    :param unit: The unit of the variable. (default: None)
+    :param numDig: The number of digits to round the expression to. (default: None)
+    """
+    if unit is None:
+        unit = " "
+    if numDig is None:
+        numDig = 8
+
+    if var is None:
+        display(Math(expr + "\mathrm{" + unit + "}"))
+    else:
+        display(Math(expr + sp.latex(round_expr(var, numDig)) + "\;" + "\mathrm{" + unit + "}"))
+
+        
+def round_expr(expr, numDig):
+    """
+    Rounds numerical values in sympy expressions
+
+    :param expr: sympy symbolic expression
+    :param numDig: number of rounding decimals
+
+    :return: rounded expression
+    """
+    return expr.xreplace({n: round(n, numDig) for n in expr.atoms(sp.Number)})
