@@ -298,6 +298,96 @@ def genConvGIF(
 
     return None
 
+def genTapsUpdateGIF(H, figName, period=1, reference=None, xlabel=[], ylabel=[], inter=20, writer=None):
+    """
+    Create and save a discrete convolution plot animation as GIF
+
+    :param x: x[n] signal
+    :param h: h[n] signal 
+    :param nInterval: array of time instants where the functions will be evaluated [nparray]
+    :param nStart: time when animation starts [scalar]
+    :param nEnd: time when animation stops [scalar]
+    :param figName: figure file name w/ folder path [string]
+    :param xlabel: xlabel [string]
+    :param ylabel: ylabel [string]
+    :param fram: number of frames [int]
+    :param inter: time interval between frames [milliseconds]
+
+    """
+    H = H[0::period, :]
+    h = H[0,:]
+    k = np.arange(0, len(h))
+
+    if reference is None:
+        ymax = np.max(H)
+        k = np.arange(0, len(h))
+    else:
+        ymax = np.max(reference)
+        k = np.arange(0, np.max([len(h), len(reference)]))
+
+    ymin = 0
+    figAnim = plt.figure()
+    ax = plt.axes(
+            xlim=(-1, k.max()+1),
+            ylim=(ymin - 0.1 * np.abs(ymax), ymax + 0.1 * np.abs(ymax)),
+        )
+    if reference is not None:
+        markerline_ref, stemlines_ref, baseline_ref = ax.stem(reference, 'r', basefmt=" ", label='reference: $g[k]$', markerfmt='s')    
+        markerline_ref.set_markersize(4)
+        stemlines_ref.set_linewidth(1)
+
+    # Initial stem plot
+    markerline, stemlines, baseline = ax.stem(0*h, 'k', basefmt=" ", label='adaptive filter: $h[k]$', markerfmt='o')    
+    markerline.set_markersize(4)
+    stemlines.set_linewidth(1)    
+    plt.xlabel(xlabel)
+    plt.grid()
+    plt.legend(loc="upper right")
+          
+    def init():
+        # Initialize the animation with empty data
+        markerline.set_ydata(0 * np.ones(len(k)))
+        
+        # stemlines
+        stemlines.set_paths([np.array([[xx, 0], 
+                                   [xx, yy]]) for (xx, yy) in zip(k, 0 * np.ones(len(k)))])        
+        
+
+        return markerline, stemlines
+      
+    totalFrames = H.shape[0]
+
+    def animate(i):        
+        # Update the data of stem plot                    
+        markerline.set_ydata(H[i,:])        
+        
+        # stemlines
+        stemlines.set_paths([np.array([[xx, 0], 
+                                   [xx, yy]]) for (xx, yy) in zip(k, H[i,:])])
+        
+        plt.title(f"iteration {i*period}: $h[k]$ ={str(np.round(H[i,:],3))}")
+        plt.tight_layout()
+
+        return markerline, stemlines
+
+    anim = FuncAnimation(
+        figAnim,
+        animate,
+        init_func=init,
+        frames=totalFrames,
+        interval=inter,
+        blit=True,
+    )
+
+    if writer is None:
+        anim.save(figName, dpi=200)
+    else:
+        anim.save(figName, dpi=200, writer=writer)
+
+    plt.close()
+
+    return None
+
 def symdisp(expr, var=None, unit=None, numDig=None):
     """
     Display sympy expressions in Latex style.
@@ -328,3 +418,49 @@ def round_expr(expr, numDig):
     :return: rounded expression
     """
     return expr.xreplace({n: round(n, numDig) for n in expr.atoms(sp.Number)})
+
+def random_square_signal(num_samples, period, duty_cycle=0.5):
+    """
+    Generate a pseudo-random sequence of square pulses with a specific period, number of samples, and duty cycle.
+
+    Parameters:
+    - num_samples (int): Total number of samples.
+    - period (int): The period of the square wave in samples.
+    - duty_cycle (float): Duty cycle of the wave as a fraction (0 to 1).
+
+    Returns:
+    - np.ndarray: Array containing the pseudo-random square wave.
+    """
+    # Initialize the square wave array
+    square_wave = np.zeros(num_samples)
+    
+    # Calculate the target number of high samples within a period
+    high_samples = int(period * duty_cycle)
+    low_samples = period - high_samples
+
+    # Current position in the signal
+    pos = 0
+
+    while pos < num_samples:
+        # Randomly generate the high duration within a reasonable range around the target
+        high_duration = np.random.randint(1, high_samples * 2)
+        
+        # Randomly generate the low duration within a reasonable range around the target
+        low_duration = np.random.randint(1, low_samples * 2)
+        
+        # Adjust high and low durations if they exceed the period or remaining samples
+        total_duration = high_duration + low_duration
+        if total_duration > period:
+            scale = period / total_duration
+            high_duration = int(high_duration * scale)
+            low_duration = period - high_duration
+        
+        # Assign the high values
+        end_pos = min(pos + high_duration, num_samples)
+        square_wave[pos:end_pos] = 1
+        pos = end_pos
+        
+        # Skip the low values
+        pos += low_duration
+    
+    return square_wave
