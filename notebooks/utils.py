@@ -10,6 +10,7 @@ def set_preferences():
     rc('font',**{'family':'serif','serif':['Times']})
     rc('text', usetex=True)
 
+    plt.rcParams['axes.facecolor'] = 'whitesmoke'
     plt.rcParams['figure.dpi'] = 200
     plt.rcParams['figure.figsize'] = (5,2.5)
 
@@ -67,48 +68,6 @@ def roll_zeropad(a, shift, axis=None):
     roll     : Elements that roll off one end come back on the other.
     rollaxis : Roll the specified axis backwards, until it lies in a
                given position.
-
-    Examples
-    --------
-    >>> x = np.arange(10)
-    >>> roll_zeropad(x, 2)
-    array([0, 0, 0, 1, 2, 3, 4, 5, 6, 7])
-    >>> roll_zeropad(x, -2)
-    array([2, 3, 4, 5, 6, 7, 8, 9, 0, 0])
-
-    >>> x2 = np.reshape(x, (2,5))
-    >>> x2
-    array([[0, 1, 2, 3, 4],
-           [5, 6, 7, 8, 9]])
-    >>> roll_zeropad(x2, 1)
-    array([[0, 0, 1, 2, 3],
-           [4, 5, 6, 7, 8]])
-    >>> roll_zeropad(x2, -2)
-    array([[2, 3, 4, 5, 6],
-           [7, 8, 9, 0, 0]])
-    >>> roll_zeropad(x2, 1, axis=0)
-    array([[0, 0, 0, 0, 0],
-           [0, 1, 2, 3, 4]])
-    >>> roll_zeropad(x2, -1, axis=0)
-    array([[5, 6, 7, 8, 9],
-           [0, 0, 0, 0, 0]])
-    >>> roll_zeropad(x2, 1, axis=1)
-    array([[0, 0, 1, 2, 3],
-           [0, 5, 6, 7, 8]])
-    >>> roll_zeropad(x2, -2, axis=1)
-    array([[2, 3, 4, 0, 0],
-           [7, 8, 9, 0, 0]])
-
-    >>> roll_zeropad(x2, 50)
-    array([[0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0]])
-    >>> roll_zeropad(x2, -50)
-    array([[0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0]])
-    >>> roll_zeropad(x2, 0)
-    array([[0, 1, 2, 3, 4],
-           [5, 6, 7, 8, 9]])
-
     """
     a = np.asanyarray(a)
     if shift == 0: return a
@@ -273,9 +232,9 @@ def genConvGIF(
                                    [xx, yy]]) for (xx, yy) in zip(k[:i], y3_updated)])        
         
         if i > 0:
-            plt.title(f"$y[{k[i-1]}] =\sum_k h[k]x[{k[i-1]}-k] = {y[i-1]:.2f}$")
+            plt.title(f"$y[{k[i-1]}] =\\sum_k h[k]x[{k[i-1]}-k] = {y[i-1]:.2f}$")
         else:
-            plt.title(f"$y[n] =\sum_k h[k]x[n-k]$")
+            plt.title(f"$y[n] =\\sum_k h[k]x[n-k]$")
         plt.tight_layout()
 
         return markerline2, markerline3, stemlines2, stemlines3
@@ -403,9 +362,9 @@ def symdisp(expr, var=None, unit=None, numDig=None):
         numDig = 8
 
     if var is None:
-        display(Math(expr + "\mathrm{" + unit + "}"))
+        display(Math(expr + "\\mathrm{" + unit + "}"))
     else:
-        display(Math(expr + sp.latex(round_expr(var, numDig)) + "\;" + "\mathrm{" + unit + "}"))
+        display(Math(expr + sp.latex(round_expr(var, numDig)) + "\\;" + "\\mathrm{" + unit + "}"))
 
         
 def round_expr(expr, numDig):
