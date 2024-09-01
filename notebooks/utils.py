@@ -264,60 +264,54 @@ def genTapsUpdateGIF(H, figName, period=1, reference=None, xlabel=[], ylabel=[],
 
     """
     H = H[0::period, :]
-    h = H[0,:]
-    k = np.arange(0, len(h))
-
-    if reference is None:
-        ymax = np.max(H)
-        k = np.arange(0, len(h))
-    else:
-        ymax = np.max(reference)
-        k = np.arange(0, np.max([len(h), len(reference)]))
+    h = H[0, :]
+    ymax = np.max(reference) if reference is not None else np.max(H)
+    k = np.arange(0, max(len(h), len(reference)) if reference is not None else len(h))
 
     ymin = 0
     figAnim = plt.figure()
     ax = plt.axes(
-            xlim=(-1, k.max()+1),
-            ylim=(ymin - 0.1 * np.abs(ymax), ymax + 0.1 * np.abs(ymax)),
-        )
+        xlim=(-1, k.max() + 1),
+        ylim=(ymin - 0.1 * np.abs(ymax), ymax + 0.1 * np.abs(ymax)),
+    )
     if reference is not None:
-        markerline_ref, stemlines_ref, baseline_ref = ax.stem(reference, 'r', basefmt=" ", label='reference: $g[k]$', markerfmt='s')    
+        markerline_ref, stemlines_ref, baseline_ref = ax.stem(reference, 'r', basefmt=" ", label='reference: $g[k]$', markerfmt='s')
         markerline_ref.set_markersize(4)
         stemlines_ref.set_linewidth(1)
 
     # Initial stem plot
-    markerline, stemlines, baseline = ax.stem(0*h, 'k', basefmt=" ", label='adaptive filter: $h[k]$', markerfmt='o')    
+    markerline, stemlines, baseline = ax.stem(0 * h, 'k', basefmt=" ", label='adaptive filter: $h[k]$', markerfmt='o')
     markerline.set_markersize(4)
-    stemlines.set_linewidth(1)    
+    stemlines.set_linewidth(1)
     plt.xlabel(xlabel)
     plt.grid()
     plt.legend(loc="upper right")
-          
+
     def init():
         # Initialize the animation with empty data
         markerline.set_ydata(0 * np.ones(len(k)))
-        
+
         # stemlines
-        stemlines.set_paths([np.array([[xx, 0], 
-                                   [xx, yy]]) for (xx, yy) in zip(k, 0 * np.ones(len(k)))])        
-        
+        stemlines.set_paths([np.array([[xx, 0], [xx, yy]]) for (xx, yy) in zip(k, 0 * np.ones(len(k)))])
 
         return markerline, stemlines
-      
+
     totalFrames = H.shape[0]
 
-    def animate(i):        
-        # Update the data of stem plot                    
-        markerline.set_ydata(H[i,:])        
-        
+    def animate(i):
+        # Update the data of stem plot
+        markerline.set_ydata(H[i, :])
+
         # stemlines
-        stemlines.set_paths([np.array([[xx, 0], 
-                                   [xx, yy]]) for (xx, yy) in zip(k, H[i,:])])
-        
-        plt.title(f"iteration {i*period}: $h[k]$ ={str(np.round(H[i,:],3))}")
+        stemlines.set_paths([np.array([[xx, 0], [xx, yy]]) for (xx, yy) in zip(k, H[i, :])])
+
+        plt.title(f"iteration {i * period}: $h[k]$ ={str(np.round(H[i, :], 3))}")
         plt.tight_layout()
 
         return markerline, stemlines
+
+    if writer is None:
+        writer = 'imagemagick'
 
     anim = FuncAnimation(
         figAnim,
@@ -328,14 +322,11 @@ def genTapsUpdateGIF(H, figName, period=1, reference=None, xlabel=[], ylabel=[],
         blit=True,
     )
 
-    if writer is None:
-        anim.save(figName, dpi=200)
-    else:
-        anim.save(figName, dpi=200, writer=writer)
-
+    anim.save(figName, dpi=200, writer=writer)
     plt.close()
 
     return None
+
 
 def symdisp(expr, var=None, unit=None, numDig=None):
     """
