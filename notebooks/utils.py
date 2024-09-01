@@ -368,6 +368,7 @@ def round_expr(expr, numDig):
     """
     return expr.xreplace({n: round(n, numDig) for n in expr.atoms(sp.Number)})
 
+
 def random_square_signal(num_samples, period, duty_cycle=0.5):
     """
     Generate a pseudo-random sequence of square pulses with a specific period, number of samples, and duty cycle.
@@ -382,7 +383,7 @@ def random_square_signal(num_samples, period, duty_cycle=0.5):
     """
     # Initialize the square wave array
     square_wave = np.zeros(num_samples)
-    
+
     # Calculate the target number of high samples within a period
     high_samples = int(period * duty_cycle)
     low_samples = period - high_samples
@@ -391,25 +392,20 @@ def random_square_signal(num_samples, period, duty_cycle=0.5):
     pos = 0
 
     while pos < num_samples:
-        # Randomly generate the high duration within a reasonable range around the target
+        # Randomly generate the high and low durations within a reasonable range around the target
         high_duration = np.random.randint(1, high_samples * 2)
-        
-        # Randomly generate the low duration within a reasonable range around the target
         low_duration = np.random.randint(1, low_samples * 2)
-        
-        # Adjust high and low durations if they exceed the period or remaining samples
-        total_duration = high_duration + low_duration
-        if total_duration > period:
-            scale = period / total_duration
-            high_duration = int(high_duration * scale)
-            low_duration = period - high_duration
-        
+
+        # Ensure the total duration does not exceed the period
+        high_duration = np.clip(high_duration, 1, period)
+        low_duration = np.clip(low_duration, 1, period - high_duration)
+
         # Assign the high values
         end_pos = min(pos + high_duration, num_samples)
         square_wave[pos:end_pos] = 1
         pos = end_pos
-        
+
         # Skip the low values
         pos += low_duration
-    
+
     return square_wave
