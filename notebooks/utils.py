@@ -6,7 +6,12 @@ from IPython.display import Math, Latex, display
 import sympy as sp
 
 def set_preferences():
-
+    """
+    Set the preferences for matplotlib plots.
+    This function sets various preferences for matplotlib plots, such as font family, figure size, label size, grid lines, and legend style.
+    Returns:
+        None
+    """    
     rc('font',**{'family':'serif','serif':['Times']})
     rc('text', usetex=True)
 
@@ -86,16 +91,12 @@ def roll_zeropad(a, shift, axis=None):
     else:
         zeros = np.zeros_like(a.take(np.arange(n-shift,n), axis))
         res = np.concatenate((zeros, a.take(np.arange(n-shift), axis)), axis)
-    if reshape:
-        return res.reshape(a.shape)
-    else:
-        return res
+    return res.reshape(a.shape) if reshape else res
     
 
 def discreteConvolution(x, h, steps, D=1):
     """
     Perform discrete convolution between input signal x and impulse response h.
-
     Parameters
     ----------
     x : array-like
@@ -114,19 +115,8 @@ def discreteConvolution(x, h, steps, D=1):
 
     """
     x = np.flip(x)
-    y = []
-    for ind in range(1, steps + 1):
-        y.append(np.dot(h, roll_zeropad(x, -(D - ind))))
-
+    y = [np.dot(h, roll_zeropad(x, -(D - ind))) for ind in range(1, steps + 1)]
     return np.array(y)
-def discreteConvolution(x, h, steps, D=1):  
-    x = np.flip(x)   
-    y = []
-    for ind in range(1,steps+1):
-        y.append(np.dot(h, roll_zeropad(x, -(D-ind))))
-
-    return np.array(y)
-
 
 def genConvGIF(
     x,
