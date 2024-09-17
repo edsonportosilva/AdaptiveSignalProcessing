@@ -251,24 +251,26 @@ def genTapsUpdateGIF(H, figName, period=1, reference=None, xlabel=[], ylabel=[],
     """
     Create and save a discrete convolution plot animation as GIF
 
-    :param x: x[n] signal
-    :param h: h[n] signal 
-    :param nInterval: array of time instants where the functions will be evaluated [nparray]
-    :param nStart: time when animation starts [scalar]
-    :param nEnd: time when animation stops [scalar]
-    :param figName: figure file name w/ folder path [string]
-    :param xlabel: xlabel [string]
-    :param ylabel: ylabel [string]
-    :param fram: number of frames [int]
-    :param inter: time interval between frames [milliseconds]
+    Parameters:
+    - H (numpy.ndarray): The input array representing the filter taps.
+    - figName (str): The name of the output GIF file.
+    - period (int, optional): The period of frames to skip in the animation. Default is 1.
+    - reference (numpy.ndarray, optional): The reference array for comparison. Default is None.
+    - xlabel (list, optional): The labels for the x-axis. Default is an empty list.
+    - ylabel (list, optional): The labels for the y-axis. Default is an empty list.
+    - inter (int, optional): The interval between frames in milliseconds. Default is 20.
+    - writer (str, optional): The writer to use for saving the animation. Default is None.
 
+    Returns:
+    - None    
+   
     """
     H = H[0::period, :]
     h = H[0, :]
     ymax = np.max(reference) if reference is not None else np.max(H)
     k = np.arange(0, max(len(h), len(reference)) if reference is not None else len(h))
 
-    ymin = 0
+    ymin = np.min(reference) if reference is not None else np.min(H)
     figAnim = plt.figure()
     ax = plt.axes(
         xlim=(-1, k.max() + 1),
@@ -322,7 +324,7 @@ def genTapsUpdateGIF(H, figName, period=1, reference=None, xlabel=[], ylabel=[],
         blit=True,
     )
 
-    anim.save(figName, dpi=200, writer=writer)
+    anim.save(figName, dpi=200, writer=writer)   
     plt.close()
 
     return None
