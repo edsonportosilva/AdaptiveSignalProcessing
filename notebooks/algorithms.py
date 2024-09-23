@@ -159,6 +159,60 @@ def lms(x, d, Ntaps, μ):
     return out, h, squaredError, H
 
 
+@njit
+def lms_newton(x, d, Ntaps, μ, α):
+    """
+    The Least Mean Squares (LMS) Newton algorithm.
+
+    Parameters:
+        x (ndarray): The input signal.
+        d (ndarray): The reference signal.
+        Ntaps (int): The number of filter taps.
+        μ (float): The LMS step size.
+        α (float): The correlation matrix update parameter.
+
+    Returns:
+        tuple: A tuple containing:
+            - ndarray: The output signal.
+            - ndarray: The final filter coefficients.
+            - ndarray: The squared error at each iteration.
+
+    """
+    # Initialize the equalizer filter coefficients
+    h = np.zeros((Ntaps,1), dtype=np.float64) 
+    H = np.zeros((len(x)-Ntaps, Ntaps), dtype=np.float64)
+    ind = np.arange(0,Ntaps)
+   
+    # Apply the LMS algorithm
+    squaredError = np.zeros(x.shape, dtype=np.float64)
+    out = np.zeros(x.shape, dtype=np.float64)
+    R = np.eye(Ntaps, dtype=np.float64)
+    x = x.reshape(-1,1).astype(np.float64)
+    
+    # Iterate through each sample of the signal
+    for i in range(Ntaps, x.shape[0]):
+        x_vec = x[i-ind,:]    
+              
+        # Generate the estimated signal using the equalizer filter
+        y = np.sum(x_vec * h)
+    
+        # Compute the error between the estimated signal and the reference signal
+        error = d[i] - y             
+        
+        # Update correlation matrix        
+        R = α*x_vec@x_vec.T + (1-α)*R
+        
+        # Calculate inverse correlation matrix
+        R_inv = np.linalg.inv(R)
+                
+        # Update the filter coefficients using the LMS update rule
+        h += μ * error * R_inv @ x_vec 
+        
+        squaredError[i] = error**2
+        out[i] = y
+        H[i-Ntaps,:] = h.T
+
+    return out, h, squaredError, H
 
 @njit
 def time_varying_filter(x, H):
