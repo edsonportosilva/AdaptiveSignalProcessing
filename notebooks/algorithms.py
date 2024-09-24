@@ -181,12 +181,12 @@ def lms_newton(x, d, Ntaps, μ, α):
     # Initialize the equalizer filter coefficients
     h = np.zeros((Ntaps,1), dtype=np.float64) 
     H = np.zeros((len(x)-Ntaps, Ntaps), dtype=np.float64)
+    R_inv = 1e-3*np.eye(Ntaps, dtype=np.float64)
+       
+    # Apply the LMS-Newton algorithm
     ind = np.arange(0,Ntaps)
-   
-    # Apply the LMS algorithm
     squaredError = np.zeros(x.shape, dtype=np.float64)
-    out = np.zeros(x.shape, dtype=np.float64)
-    R = np.eye(Ntaps, dtype=np.float64)
+    out = np.zeros(x.shape, dtype=np.float64)    
     x = x.reshape(-1,1).astype(np.float64)
     
     # Iterate through each sample of the signal
@@ -199,13 +199,10 @@ def lms_newton(x, d, Ntaps, μ, α):
         # Compute the error between the estimated signal and the reference signal
         error = d[i] - y             
         
-        # Update correlation matrix        
-        R = α*x_vec@x_vec.T + (1-α)*R
-        
-        # Calculate inverse correlation matrix
-        R_inv = np.linalg.inv(R)
-                
-        # Update the filter coefficients using the LMS update rule
+        # Update inverse correlation matrix      
+        R_inv = 1/(1-α)*(R_inv - ( R_inv @ (x_vec@x_vec.T) @ R_inv)/( (1-α)/α + x_vec.T @ R_inv @ x_vec) )
+                               
+        # Update the filter coefficients using the LMS-Newton update rule
         h += μ * error * R_inv @ x_vec 
         
         squaredError[i] = error**2
