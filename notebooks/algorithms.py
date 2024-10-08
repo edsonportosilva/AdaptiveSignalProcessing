@@ -260,6 +260,61 @@ def lms_newton(x, d, Ntaps, μ, α):
     return out, h, squaredError, H
 
 @njit
+def rls(x, d, Ntaps, λ):
+    """
+    The Recursive Least Squares (RLS) algorithm.
+
+    Parameters:
+        x (ndarray): The input signal.
+        d (ndarray): The reference signal.
+        Ntaps (int): The number of filter taps.
+        λ (float): RLS forgetting factor.       
+
+    Returns:
+        tuple: A tuple containing:
+            - ndarray: The output signal.
+            - ndarray: The final filter coefficients.
+            - ndarray: The squared error at each iteration.
+
+    """
+    # Initialize the equalizer filter coefficients
+    h = np.zeros((Ntaps,1), dtype=np.float64) 
+    H = np.zeros((len(x)-Ntaps, Ntaps), dtype=np.float64)
+    Rxx_inv = 1e-3*np.eye(Ntaps, dtype=np.float64)
+    pxd = np.zeros((Ntaps,1), dtype=np.float64)
+       
+    # Apply the LMS-Newton algorithm
+    ind = np.arange(0,Ntaps)
+    squaredError = np.zeros(x.shape, dtype=np.float64)
+    out = np.zeros(x.shape, dtype=np.float64)    
+    x = x.reshape(-1,1).astype(np.float64)
+    
+    # Iterate through each sample of the signal
+    for i in range(Ntaps, x.shape[0]):
+        x_vec = x[i-ind,:]    
+
+        # Update inverse correlation matrix      
+        Rxx_inv = 1/λ*(Rxx_inv - ( Rxx_inv @ (x_vec@x_vec.T) @ Rxx_inv)/( λ + x_vec.T @ Rxx_inv @ x_vec) )
+
+        # Update inverse correlation matrix      
+        pxd = x_vec * d[i] + λ*pxd
+
+        # Update the filter coefficients using the RLS update rule
+        h = Rxx_inv @ pxd 
+              
+        # Generate the estimated signal using the equalizer filter
+        y = np.sum(x_vec * h)
+    
+        # Compute the a posteriori error between the estimated signal and the reference signal
+        error = d[i] - y    
+        
+        squaredError[i] = error**2
+        out[i] = y
+        H[i-Ntaps,:] = h.T
+
+    return out, h, squaredError, H
+
+@njit
 def time_varying_filter(x, H):
     """
     Implements the time-varying filter algorithm.
