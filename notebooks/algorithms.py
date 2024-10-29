@@ -377,30 +377,31 @@ def kalman_filter(A, C, Rn, Rv, x_init, y):
     Parameters
     ----------
     A : ndarray
-        State transition matrix of shape (n_state, n_state).
+        State transition matrix of shape (N, N).
     C : ndarray
-        Observation matrix of shape (n_observation, n_state).
+        Observation matrix of shape (L, N).
     Rn : ndarray
-        Process noise covariance matrix of shape (n_state, n_state).
+        Process noise covariance matrix of shape (N, N).
     Rv : ndarray
-        Measurement noise covariance matrix of shape (n_observation, n_observation).
+        Measurement noise covariance matrix of shape (L, L).
     x_init : ndarray
-        Initial state estimate of shape (n_state, 1).
+        Initial state estimate of shape (N, 1).
     y : ndarray
-        Array of observations (measurement vectors) with shape (n_observation, n_samples), 
+        Array of observations (measurement vectors) with shape (L, M), 
         where each column corresponds to an observation at a time instant.
 
     Returns
     -------
     x_hat : ndarray
-        Array of state estimates with shape (n_state, n_samples), containing the estimated state after 
+        Array of state estimates with shape (N, M), containing the estimated state after 
         each observation.
 
     Notes
     -----
-    The Kalman gain `K` is computed at each time step to optimally balance the prediction with the 
-    measurement. `Re_posterior` is updated to refine the state covariance estimate, and an identity matrix 
-    `Ie` is used to simplify the update step for the covariance.
+    N is the dimension of the state vector; L is the dimension of the observation vector;
+    M is the number of measurement samples. The Kalman gain `K` is computed at each time 
+    step to optimally balance the prediction with the measurement. `Re_posterior` is updated 
+    to refine the state covariance estimate, and an identity matrix.
 
     """
     # Initialize state and covariance
@@ -415,7 +416,7 @@ def kalman_filter(A, C, Rn, Rv, x_init, y):
     
     # Pre-allocate
     x_hat = np.zeros((x_init.shape[0], y.shape[1]), dtype=np.float64)
-    Ie = np.eye(Re_posterior.shape[0], dtype=np.float64)
+    I = np.eye(Re_posterior.shape[0], dtype=np.float64)
     
     for ind in range(y.shape[1]):
         y_ = y[:,ind:ind+1]
@@ -429,13 +430,12 @@ def kalman_filter(A, C, Rn, Rv, x_init, y):
         
         # Update step: E[x[k]|y[k]]
         x = x_prior + K @ (y_ - C @ x_prior)
-        Re_posterior = (Ie - K @ C) @ Re_prior
+        Re_posterior = (I - K @ C) @ Re_prior
                 
         # Store estimates
         x_hat[:,ind] = x.flatten()
 
     return x_hat
-
 @njit
 def time_varying_filter(x, H):
     """
