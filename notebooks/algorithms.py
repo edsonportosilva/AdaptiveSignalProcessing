@@ -162,20 +162,34 @@ def lms(x, d, Ntaps, μ):
 @njit
 def nlms(x, d, Ntaps, μ, γ=1e-6):
     """
-    The Normalized Least Mean Squares (LMS) Newton algorithm.
+    Applies the Normalized Least Mean Squares (NLMS) algorithm for adaptive filtering.
 
-    Parameters:
-        x (ndarray): The input signal.
-        d (ndarray): The reference signal.
-        Ntaps (int): The number of filter taps.
-        μ (float): The LMS step size.
-        γ (float): Parameter to avoid large step sizes when the norm of the input vector is small.
+    The NLMS algorithm is a variant of the Least Mean Squares (LMS) algorithm that adjusts 
+    the step size based on the norm of the input signal to improve convergence stability.
 
-    Returns:
-        tuple: A tuple containing:
-            - ndarray: The output signal.
-            - ndarray: The final filter coefficients.
-            - ndarray: The squared error at each iteration.
+    Parameters
+    ----------
+    x : ndarray
+        Input signal of shape (n_samples,).
+    d : ndarray
+        Reference or desired signal of shape (n_samples,).
+    Ntaps : int
+        Number of filter taps (coefficients).
+    μ : float
+        Step size parameter for the NLMS update, controlling the adaptation rate.
+    γ : float, optional
+        Small regularization constant to avoid division by zero, by default 1e-6.
+
+    Returns
+    -------
+    out : ndarray
+        Output signal of shape (n_samples,), representing the filtered signal.
+    h : ndarray
+        Final filter coefficients of shape (Ntaps, 1).
+    squaredError : ndarray
+        Squared error at each iteration of shape (n_samples,).
+    H : ndarray
+        Evolution of filter coefficients across iterations, with shape (n_samples - Ntaps, Ntaps).
 
     """
     # Initialize the equalizer filter coefficients
@@ -210,21 +224,36 @@ def nlms(x, d, Ntaps, μ, γ=1e-6):
 @njit
 def lms_newton(x, d, Ntaps, μ, α):
     """
-    The Least Mean Squares (LMS) Newton algorithm.
+    Applies the Least Mean Squares (LMS) Newton algorithm for adaptive filtering.
 
-    Parameters:
-        x (ndarray): The input signal.
-        d (ndarray): The reference signal.
-        Ntaps (int): The number of filter taps.
-        μ (float): The LMS step size.
-        α (float): The correlation matrix update parameter.
+    The LMS-Newton algorithm adapts the filter coefficients by approximating the inverse
+    correlation matrix of the input signal, resulting in improved convergence properties 
+    compared to standard LMS.
 
-    Returns:
-        tuple: A tuple containing:
-            - ndarray: The output signal.
-            - ndarray: The final filter coefficients.
-            - ndarray: The squared error at each iteration.
+    Parameters
+    ----------
+    x : ndarray
+        Input signal of shape (n_samples,).
+    d : ndarray
+        Reference or desired signal of shape (n_samples,).
+    Ntaps : int
+        Number of filter taps (coefficients).
+    μ : float
+        Step size parameter for the LMS update, controlling the adaptation rate.
+    α : float
+        Parameter for updating the inverse correlation matrix, balancing the influence 
+        of new and old information in the matrix.
 
+    Returns
+    -------
+    out : ndarray
+        Output signal of shape (n_samples,), representing the filtered signal.
+    h : ndarray
+        Final filter coefficients of shape (Ntaps, 1).
+    squaredError : ndarray
+        Squared error at each iteration, with shape (n_samples,).
+    H : ndarray
+        Evolution of filter coefficients across iterations, with shape (n_samples - Ntaps, Ntaps).
     """
     # Initialize the equalizer filter coefficients
     h = np.zeros((Ntaps,1), dtype=np.float64) 
@@ -262,19 +291,34 @@ def lms_newton(x, d, Ntaps, μ, α):
 @njit
 def rls(x, d, Ntaps, λ):
     """
-    The Recursive Least Squares (RLS) algorithm.
+    Applies the Recursive Least Squares (RLS) algorithm for adaptive filtering.
 
-    Parameters:
-        x (ndarray): The input signal.
-        d (ndarray): The reference signal.
-        Ntaps (int): The number of filter taps.
-        λ (float): RLS forgetting factor.       
+    The RLS algorithm recursively computes the filter coefficients to minimize the 
+    sum of the squares of the errors, providing fast convergence for time-varying 
+    signals by adjusting the forgetting factor `λ`.
 
-    Returns:
-        tuple: A tuple containing:
-            - ndarray: The output signal.
-            - ndarray: The final filter coefficients.
-            - ndarray: The squared error at each iteration.
+    Parameters
+    ----------
+    x : ndarray
+        Input signal of shape (n_samples,).
+    d : ndarray
+        Reference or desired signal of shape (n_samples,).
+    Ntaps : int
+        Number of filter taps (coefficients).
+    λ : float
+        Forgetting factor for the RLS algorithm, where 0 < λ ≤ 1. Lower values give more 
+        weight to recent data, enhancing adaptation in non-stationary environments.
+
+    Returns
+    -------
+    out : ndarray
+        Output signal of shape (n_samples,), representing the filtered signal.
+    h : ndarray
+        Final filter coefficients of shape (Ntaps, 1).
+    squaredError : ndarray
+        Squared error at each iteration, with shape (n_samples,).
+    H : ndarray
+        Evolution of filter coefficients across iterations, with shape (n_samples - Ntaps, Ntaps).
 
     """
     # Initialize the equalizer filter coefficients
@@ -313,6 +357,84 @@ def rls(x, d, Ntaps, λ):
         H[i-Ntaps,:] = h.T
 
     return out, h, squaredError, H
+
+@njit
+def kalman_filter(A, C, Rn, Rv, x_init, y):
+    """
+    Applies the Kalman filter to a series of observations for a system without external inputs.
+
+    The Kalman filter iteratively estimates the state of a linear dynamic system by minimizing 
+    the mean squared error. It operates in two steps: a prediction step and an update step.
+
+    System model:
+        x[k+1] = A * x[k] + n[k]
+        y[k] = C * x[k] + v[k]
+
+    where:
+        n[k] ~ Normal(0, Rn)
+        v[k] ~ Normal(0, Rv)
+
+    Parameters
+    ----------
+    A : ndarray
+        State transition matrix of shape (n_state, n_state).
+    C : ndarray
+        Observation matrix of shape (n_observation, n_state).
+    Rn : ndarray
+        Process noise covariance matrix of shape (n_state, n_state).
+    Rv : ndarray
+        Measurement noise covariance matrix of shape (n_observation, n_observation).
+    x_init : ndarray
+        Initial state estimate of shape (n_state, 1).
+    y : ndarray
+        Array of observations (measurement vectors) with shape (n_observation, n_samples), 
+        where each column corresponds to an observation at a time instant.
+
+    Returns
+    -------
+    x_hat : ndarray
+        Array of state estimates with shape (n_state, n_samples), containing the estimated state after 
+        each observation.
+
+    Notes
+    -----
+    The Kalman gain `K` is computed at each time step to optimally balance the prediction with the 
+    measurement. `Re_posterior` is updated to refine the state covariance estimate, and an identity matrix 
+    `Ie` is used to simplify the update step for the covariance.
+
+    """
+    # Initialize state and covariance
+    x = x_init
+    Re_posterior = x_init*x_init.T
+    
+    # Assume all float variables
+    Rv = Rv.astype(np.float64)
+    Rn = Rn.astype(np.float64)
+    x = x.astype(np.float64)
+    C = C.astype(np.float64)       
+    
+    # Pre-allocate
+    x_hat = np.zeros((x_init.shape[0], y.shape[1]), dtype=np.float64)
+    Ie = np.eye(Re_posterior.shape[0], dtype=np.float64)
+    
+    for ind in range(y.shape[1]):
+        y_ = y[:,ind:ind+1]
+                
+        # Prediction step: E[x[k]|x[k-1]]
+        x_prior = A @ x   
+        Re_prior = A @ Re_posterior @ A.T + Rn     
+               
+        # Kalman gain                        
+        K = Re_prior @ C.T @ np.linalg.inv(C @ Re_prior @ C.T + Rv)
+        
+        # Update step: E[x[k]|y[k]]
+        x = x_prior + K @ (y_ - C @ x_prior)
+        Re_posterior = (Ie - K @ C) @ Re_prior
+                
+        # Store estimates
+        x_hat[:,ind] = x.flatten()
+
+    return x_hat
 
 @njit
 def time_varying_filter(x, H):
