@@ -155,7 +155,7 @@ def lms(x, d, Ntaps, μ):
 
         squaredError[i] = error**2
         out[i] = y
-        H[i,:] = h
+        H[i-Ntaps,:] = h
 
     return out, h, squaredError, H
 
