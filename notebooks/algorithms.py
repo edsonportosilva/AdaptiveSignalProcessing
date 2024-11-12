@@ -132,13 +132,13 @@ def lms(x, d, Ntaps, μ):
     The filter coefficients are updated at each iteration based on the current error and input signal.
     """
     # Initialize the equalizer filter coefficients
-    h = np.zeros(Ntaps) 
-    H = np.zeros((len(x)-Ntaps, Ntaps))
+    h = np.zeros(Ntaps, dtype=np.float64) 
+    H = np.zeros((len(x)-Ntaps, Ntaps), dtype=np.float64)
     ind = np.arange(0,Ntaps)
    
     # Apply the LMS algorithm
-    squaredError = np.zeros(x.shape)
-    out  = np.zeros(x.shape)
+    squaredError = np.zeros(x.shape, dtype=np.float64)
+    out  = np.zeros(x.shape, dtype=np.float64)
         
     # Iterate through each sample of the signal
     for i in range(Ntaps, len(x)):
