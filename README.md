@@ -91,35 +91,6 @@ The notebooks are designed to work seamlessly with Google Colab. Simply:
 2. Click the "Open in Colab" button (or manually open in Colab)
 3. The notebook will automatically clone the repository and install dependencies
 
-## How to Use This Course
-
-### For Students
-
-1. **Follow the Sequential Order**: The notebooks are numbered and build upon each other. Start with notebook 1 and progress sequentially.
-
-2. **Run the Code**: Execute all code cells to see the algorithms in action. Experiment by modifying parameters to develop intuition.
-
-3. **Study the Theory**: Each notebook contains mathematical derivations, explanations, and visualizations to help you understand the concepts.
-
-4. **Explore the Utilities**: Check out `algorithms.py` and `utils.py` to see implementations of adaptive filtering algorithms and helper functions.
-
-5. **Consult the Slides**: Portuguese speakers can refer to the PDF slides in `slides pt-br/` for additional explanations.
-
-### For Instructors
-
-- The notebooks can be used directly in lectures or assigned as homework
-- Each notebook is self-contained with theory and practical examples
-- The modular structure allows selecting specific topics as needed
-- Python implementations provide a foundation for student projects
-
-## Key Features
-
-- **Interactive Learning**: Jupyter notebooks with executable code and visualizations
-- **Complete Implementations**: Implementations of classic adaptive algorithms with Numba JIT compilation for computational efficiency
-- **Visual Demonstrations**: Animated GIFs and plots showing algorithm behavior
-- **Mathematical Rigor**: Detailed derivations with SymPy for symbolic mathematics
-- **Bilingual Support**: Code and notebooks in English, lecture slides available in Portuguese
-
 ## Python Modules
 
 ### `algorithms.py`
@@ -163,7 +134,3 @@ Federal University of Campina Grande (UFCG)
 ## Contributing
 
 Contributions, issues, and feature requests are welcome! Feel free to open an issue or submit a pull request.
-
-## Acknowledgments
-
-This material has been developed to support graduate students in understanding and implementing adaptive signal processing techniques.
