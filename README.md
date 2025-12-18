@@ -115,7 +115,7 @@ The notebooks are designed to work seamlessly with Google Colab. Simply:
 ## Key Features
 
 - **Interactive Learning**: Jupyter notebooks with executable code and visualizations
-- **Complete Implementations**: Implementations of classic adaptive algorithms optimized with Numba JIT compilation
+- **Complete Implementations**: Implementations of classic adaptive algorithms with Numba JIT compilation for computational efficiency
 - **Visual Demonstrations**: Animated GIFs and plots showing algorithm behavior
 - **Mathematical Rigor**: Detailed derivations with SymPy for symbolic mathematics
 - **Bilingual Support**: Code and notebooks in English, lecture slides available in Portuguese
@@ -128,10 +128,10 @@ This module provides optimized implementations of adaptive filtering algorithms 
 
 - **`estimate_correlation_matrix(x, N)`**: Estimates the unbiased autocorrelation matrix from a signal sequence
 - **`estimate_cross_correlation(x, d, N)`**: Estimates the unbiased cross-correlation vector between input and desired signals
-- **`lms(x, d, Ntaps, μ)`**: Least Mean Squares adaptive filter
-- **`nlms(x, d, Ntaps, μ, γ)`**: Normalized Least Mean Squares algorithm with regularization parameter
-- **`lms_newton(x, d, Ntaps, μ, α)`**: LMS-Newton algorithm using an approximation of the inverse correlation matrix
-- **`rls(x, d, Ntaps, λ)`**: Recursive Least Squares algorithm with forgetting factor
+- **`lms(x, d, Ntaps, μ)`**: Least Mean Squares adaptive filter with step size μ
+- **`nlms(x, d, Ntaps, μ, γ)`**: Normalized Least Mean Squares algorithm with step size μ and regularization parameter γ
+- **`lms_newton(x, d, Ntaps, μ, α)`**: LMS-Newton algorithm with step size μ and inverse correlation matrix update parameter α
+- **`rls(x, d, Ntaps, λ)`**: Recursive Least Squares algorithm with forgetting factor λ
 - **`kalman_filter(A, C, Rn, Rv, x_init, y)`**: Kalman filter for state estimation in linear systems
 - **`time_varying_filter(x, H)`**: Applies a time-varying filter with coefficient evolution matrix H
 
