@@ -126,10 +126,10 @@ The notebooks are designed to work seamlessly with Google Colab. Simply:
 
 This module provides optimized implementations of adaptive filtering algorithms using Numba's just-in-time compilation:
 
-- **`estimate_correlation_matrix(x, N)`**: Estimates the unbiased autocorrelation matrix from a signal sequence
+- **`estimate_correlation_matrix(x, N)`**: Estimates the unbiased correlation matrix from a signal sequence
 - **`estimate_cross_correlation(x, d, N)`**: Estimates the unbiased cross-correlation vector between input and desired signals
 - **`lms(x, d, Ntaps, μ)`**: Least Mean Squares adaptive filter with step size μ
-- **`nlms(x, d, Ntaps, μ, γ)`**: Normalized Least Mean Squares algorithm with step size μ and regularization parameter γ
+- **`nlms(x, d, Ntaps, μ, γ=1e-6)`**: Normalized Least Mean Squares algorithm with step size μ and regularization parameter γ (default: 1e-6)
 - **`lms_newton(x, d, Ntaps, μ, α)`**: LMS-Newton algorithm with step size μ and inverse correlation matrix update parameter α
 - **`rls(x, d, Ntaps, λ)`**: Recursive Least Squares algorithm with forgetting factor λ
 - **`kalman_filter(A, C, Rn, Rv, x_init, y)`**: Kalman filter for state estimation in linear systems
