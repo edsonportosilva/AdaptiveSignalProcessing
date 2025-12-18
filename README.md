@@ -4,23 +4,33 @@ This repository contains comprehensive course materials for the Adaptive Signal 
 
 <img class="center" src="https://github.com/edsonportosilva/AdaptiveSignalProcessing/blob/main/notebooks/figures/capa.png" width="800">
 
-## 📚 Course Content
+## Course Content
 
-The course covers fundamental and advanced topics in adaptive signal processing through interactive Jupyter notebooks with theory, Python implementations, and visualizations:
+The course covers fundamental and advanced topics in adaptive signal processing through interactive Jupyter notebooks with theory, Python implementations, and visualizations.
 
 ### Topics Covered
 
-1. **Introduction to Adaptive Signal Processing** - Fundamental concepts and applications
-2. **Introduction to Adaptive Filtering** - Basic principles and filter structures
-3. **Review of Probability and Stochastic Processes** - Mathematical foundations
-4. **The Wiener Filter and the LMS Algorithm** - Optimal filtering and least mean squares
-5. **Variants of the LMS Algorithm** - Normalized LMS, Sign LMS, and other adaptations
-6. **RLS Algorithms** - Recursive Least Squares methods
-7. **Kalman Filters** - State-space filtering and estimation
-8. **MLP Neural Networks** - Multi-layer perceptrons for adaptive processing
-9. **Blind Adaptive Filtering** - Adaptive methods without reference signals
+The course is organized in nine Jupyter notebooks:
 
-## 📁 Repository Structure
+1. **Introduction to Adaptive Signal Processing** - Applications of adaptive signal processing and review of basic concepts of digital signal processing (sampling theorem, discrete-time convolution, z-transform, DTFT, and DFT)
+
+2. **Introduction to Adaptive Filtering** - General structure of adaptive filters, system identification, linear prediction, interference cancellation, and inverse modeling
+
+3. **Review of Probability and Stochastic Processes** - Random variables, probability distributions, expected values, correlation functions, and stationarity
+
+4. **The Wiener Filter and the LMS Algorithm** - Optimal linear filtering in the mean-square sense, Wiener-Hopf equations, gradient descent optimization, and the Least Mean Squares (LMS) algorithm
+
+5. **Variants of the LMS Algorithm** - Normalized LMS (NLMS), LMS-Newton algorithm, and convergence analysis
+
+6. **RLS Algorithms** - Recursive Least Squares algorithm, forgetting factor, and comparison with LMS methods
+
+7. **Kalman Filters** - State-space representation, Kalman filtering for linear systems, prediction and update steps
+
+8. **MLP Neural Networks** - Multi-layer perceptrons, backpropagation algorithm, and applications in adaptive signal processing
+
+9. **Blind Adaptive Filtering** - Adaptive equalization without training sequences, constant modulus algorithm (CMA), and other blind adaptation techniques
+
+## Repository Structure
 
 ```
 AdaptiveSignalProcessing/
@@ -35,7 +45,7 @@ AdaptiveSignalProcessing/
 └── README.md              # This file
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -81,7 +91,7 @@ The notebooks are designed to work seamlessly with Google Colab. Simply:
 2. Click the "Open in Colab" button (or manually open in Colab)
 3. The notebook will automatically clone the repository and install dependencies
 
-## 💡 How to Use This Course
+## How to Use This Course
 
 ### For Students
 
@@ -102,42 +112,58 @@ The notebooks are designed to work seamlessly with Google Colab. Simply:
 - The modular structure allows selecting specific topics as needed
 - Python implementations provide a foundation for student projects
 
-## 🔧 Key Features
+## Key Features
 
 - **Interactive Learning**: Jupyter notebooks with executable code and visualizations
-- **Complete Implementations**: Production-ready implementations of classic adaptive algorithms (LMS, NLMS, RLS, Kalman, etc.)
+- **Complete Implementations**: Implementations of classic adaptive algorithms optimized with Numba JIT compilation
 - **Visual Demonstrations**: Animated GIFs and plots showing algorithm behavior
 - **Mathematical Rigor**: Detailed derivations with SymPy for symbolic mathematics
-- **Performance Optimized**: Uses Numba JIT compilation for computational efficiency
-- **Bilingual Support**: Code comments in English, slides available in Portuguese
+- **Bilingual Support**: Code and notebooks in English, lecture slides available in Portuguese
 
-## 📖 Additional Resources
+## Python Modules
 
-- **Python Utilities** (`notebooks/algorithms.py`): Contains implementations of:
-  - LMS and variants (NLMS, Sign-Error LMS, Sign-Regressor LMS)
-  - RLS algorithms
-  - Correlation matrix estimation
-  - And more adaptive filtering algorithms
+### `algorithms.py`
 
-- **Visualization Tools** (`notebooks/utils.py`): Functions for:
-  - Plot styling and preferences
-  - Animation generation
-  - Mathematical expression rendering
+This module provides optimized implementations of adaptive filtering algorithms using Numba's just-in-time compilation:
 
-## 📝 License
+- **`estimate_correlation_matrix(x, N)`**: Estimates the unbiased autocorrelation matrix from a signal sequence
+- **`estimate_cross_correlation(x, d, N)`**: Estimates the unbiased cross-correlation vector between input and desired signals
+- **`lms(x, d, Ntaps, μ)`**: Least Mean Squares adaptive filter
+- **`nlms(x, d, Ntaps, μ, γ)`**: Normalized Least Mean Squares algorithm with regularization parameter
+- **`lms_newton(x, d, Ntaps, μ, α)`**: LMS-Newton algorithm using an approximation of the inverse correlation matrix
+- **`rls(x, d, Ntaps, λ)`**: Recursive Least Squares algorithm with forgetting factor
+- **`kalman_filter(A, C, Rn, Rv, x_init, y)`**: Kalman filter for state estimation in linear systems
+- **`time_varying_filter(x, H)`**: Applies a time-varying filter with coefficient evolution matrix H
+
+All adaptive filtering functions return the filtered output, final filter coefficients, squared error history, and the evolution of filter coefficients over time.
+
+### `utils.py`
+
+This module provides visualization and utility functions for the notebooks:
+
+- **`set_preferences()`**: Configures matplotlib plotting parameters for consistent figure styling
+- **`roll_zeropad(a, shift, axis)`**: Rolls array elements with zero-padding
+- **`discreteConvolution(x, h, steps, D)`**: Computes discrete convolution with visualization support
+- **`genConvGIF()`**: Generates animated GIF visualizations of the convolution process
+- **`genTapsUpdateGIF(H, figName, ...)`**: Creates animated visualizations of adaptive filter coefficient evolution
+- **`symdisp(expr, var, unit, numDig)`**: Displays symbolic mathematical expressions with proper formatting
+- **`round_expr(expr, numDig)`**: Rounds symbolic expressions to specified precision
+- **`random_square_signal(num_samples, period, duty_cycle)`**: Generates random square wave signals for testing
+
+## License
 
 This work is licensed under CC0 1.0 Universal (Public Domain). Feel free to use, modify, and distribute for educational and research purposes.
 
-## 👨‍🏫 Author
+## Author
 
 **Edson Porto Silva**  
 Graduate Program in Electrical Engineering  
 Federal University of Campina Grande (UFCG)
 
-## 🤝 Contributing
+## Contributing
 
 Contributions, issues, and feature requests are welcome! Feel free to open an issue or submit a pull request.
 
-## ⭐ Acknowledgments
+## Acknowledgments
 
-This material has been developed to support graduate students in understanding and implementing adaptive signal processing techniques. If you find this repository useful, please consider giving it a star!
+This material has been developed to support graduate students in understanding and implementing adaptive signal processing techniques.
