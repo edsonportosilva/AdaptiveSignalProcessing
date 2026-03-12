@@ -394,18 +394,28 @@ def rls_apriori(x, d, Ntaps, λ):
     """
     The Recursive Least Squares (RLS) algorithm with a priori error.
 
-    Parameters:
-        x (ndarray): The input signal.
-        d (ndarray): The reference signal.
-        Ntaps (int): The number of filter taps.
-        λ (float): RLS forgetting factor.
+    Parameters
+    ----------
+    x : ndarray
+        The input signal, a 1D array representing the signal to be filtered.
+    d : ndarray
+        The reference signal, a 1D array of the same length as `x`, representing the desired output.
+    Ntaps : int
+        The number of filter taps (coefficients).
+    λ : float
+        The forgetting factor for the RLS algorithm, where 0 < λ ≤ 1. Lower values give more
+        weight to recent data, enhancing adaptation in non-stationary environments.
 
-    Returns:
-        tuple: A tuple containing:
-            - ndarray: The output signal.
-            - ndarray: The final filter coefficients.
-            - ndarray: The squared error at each iteration.
-
+    Returns
+    -------
+    out : ndarray
+        The output signal, a 1D array representing the filtered signal at each iteration.
+    h : ndarray
+        The final filter coefficients, a 1D array of length `Ntaps` representing the filter after the last iteration.
+    squaredError : ndarray
+        The squared error between the reference signal and the output signal at each iteration, a 1D array of the same length as `x`.
+    H : ndarray
+        A 2D array where each row contains the filter coefficients at each iteration, with shape `(len(x) - Ntaps, Ntaps)`.
     """
     # Initialize the equalizer filter coefficients
     h = np.zeros((Ntaps, 1), dtype=np.float64)
@@ -448,18 +458,28 @@ def rls_aposteriori(x, d, Ntaps, λ):
     """
     The Recursive Least Squares (RLS) algorithm with a posteriori error.
 
-    Parameters:
-        x (ndarray): The input signal.
-        d (ndarray): The reference signal.
-        Ntaps (int): The number of filter taps.
-        λ (float): RLS forgetting factor.
+    Parameters
+    ----------
+    x : ndarray
+        The input signal, a 1D array representing the signal to be filtered.
+    d : ndarray
+        The reference signal, a 1D array of the same length as `x`, representing the desired output.
+    Ntaps : int
+        The number of filter taps (coefficients).
+    λ : float
+        The forgetting factor for the RLS algorithm, where 0 < λ ≤ 1. Lower values give more
+        weight to recent data, enhancing adaptation in non-stationary environments.
 
-    Returns:
-        tuple: A tuple containing:
-            - ndarray: The output signal.
-            - ndarray: The final filter coefficients.
-            - ndarray: The squared error at each iteration.
-
+    Returns
+    -------
+    out : ndarray
+        The output signal, a 1D array representing the filtered signal at each iteration.
+    h : ndarray
+        The final filter coefficients, a 1D array of length `Ntaps` representing the filter after the last iteration.
+    squaredError : ndarray
+        The squared error between the reference signal and the output signal at each iteration, a 1D array of the same length as `x`.
+    H : ndarray
+        A 2D array where each row contains the filter coefficients at each iteration, with shape `(len(x) - Ntaps, Ntaps)`.
     """
     # Initialize the equalizer filter coefficients
     h = np.zeros((Ntaps, 1), dtype=np.float64)
