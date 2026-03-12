@@ -97,16 +97,19 @@ The notebooks are designed to work seamlessly with Google Colab. Simply:
 
 This module provides optimized implementations of adaptive filtering algorithms using Numba's just-in-time compilation:
 
-- **`estimate_correlation_matrix(x, N)`**: Estimates the unbiased correlation matrix from a signal sequence
-- **`estimate_cross_correlation(x, d, N)`**: Estimates the unbiased cross-correlation vector between input and desired signals
-- **`lms(x, d, Ntaps, μ)`**: Least Mean Squares adaptive filter with step size μ
-- **`nlms(x, d, Ntaps, μ, γ=1e-6)`**: Normalized Least Mean Squares algorithm with step size μ and regularization parameter γ (default: 1e-6)
+- **`lms(x, d, Ntaps, μ)`**: Least Mean Squares (LMS) adaptive filter with step size μ
+- **`nlms(x, d, Ntaps, μ, γ=1e-6)`**: Normalized Least Mean Squares (NLMS) algorithm with step size μ and regularization parameter γ (default: 1e-6)
 - **`lms_newton(x, d, Ntaps, μ, α)`**: LMS-Newton algorithm with step size μ and inverse correlation matrix update parameter α
-- **`rls(x, d, Ntaps, λ)`**: Recursive Least Squares algorithm with forgetting factor λ
-- **`kalman_filter(A, C, Rn, Rv, x_init, y)`**: Kalman filter for state estimation in linear systems
-- **`time_varying_filter(x, H)`**: Applies a time-varying filter with coefficient evolution matrix H
+- **`rls(x, d, Ntaps, λ)`**: Recursive Least Squares (RLS) algorithm with forgetting factor λ
+- **`rls_apriori(x, d, Ntaps, λ)`**: RLS algorithm using the a priori error formulation with forgetting factor λ
+- **`rls_aposteriori(x, d, Ntaps, λ)`**: RLS algorithm using the a posteriori error formulation with forgetting factor λ
+- **`kalman_filter(A, C, Rn, Rv, x_init, y)`**: Kalman filter for state estimation in linear systems with process noise covariance Rn and measurement noise covariance Rv
+- **`cma(x, Ntaps, μ)`**: Constant Modulus Algorithm (CMA) for blind equalization with step size μ
+- **`initialize_nn(layers)`**: Initializes weight matrices and bias vectors for each layer of a multi-layer perceptron neural network
+- **`fit(X, Y, weights, biases, activation, learning_rate, epochs, batch_size=10)`**: Trains a multi-layer perceptron via backpropagation and batch gradient descent
+- **`predict(X, weights, biases, activation)`**: Performs forward propagation through a trained neural network to generate predictions
 
-All adaptive filtering functions return the filtered output, final filter coefficients, squared error history, and the evolution of filter coefficients over time.
+The LMS, NLMS, LMS-Newton, RLS, and CMA functions return the filtered output, final filter coefficients, squared error history, and the evolution of filter coefficients over time.
 
 ### `utils.py`
 
