@@ -582,9 +582,78 @@ def kalman_filter(A, C, Rn, Rv, x_init, y):
 
 
 @njit
+def cma(x, Ntaps, mu):
+    """
+    The Constant Modulus Algorithm (CMA) for blind equalization.
+
+    Parameters
+    ----------
+    x : ndarray
+        Input signal, a 1D array representing the received signal to be filtered.
+    Ntaps : int
+        The number of filter taps.
+    mu : float
+        The CMA step size.
+
+    Returns
+    -------
+    out : ndarray
+        The output signal, a 1D array representing the filtered signal at each iteration.
+    h : ndarray
+        The final filter coefficients, a 1D array of length `Ntaps`.
+    costFunction : ndarray
+        The CMA cost function value at each iteration, a 1D array of the same length as `x`.
+    H : ndarray
+        A 2D array where each row contains the filter coefficients at each iteration, with shape `(len(x) - Ntaps, Ntaps)`.
+
+    """
+    # Initialize the equalizer filter coefficients
+    h = np.zeros(Ntaps)
+    h[0] = 1.0  # Initialize first tap to 1
+
+    H = np.zeros((len(x) - Ntaps, Ntaps))
+    ind = np.arange(0, Ntaps)
+
+    # Apply the CMA algorithm
+    costFunction = np.zeros(x.shape)
+    out = np.zeros(x.shape)
+
+    # Iterate through each sample of the signal
+    for i in range(Ntaps, len(x)):
+        x_vec = x[i - ind]
+
+        # Generate the estimated signal using the equalizer filter
+        y = np.sum(x_vec * h)
+
+        # Compute the error between the estimated signal and the reference signal
+        error = (np.abs(y) ** 2 - 1) * y
+
+        # Update the filter coefficients using the CMA update rule
+        h -= mu * error * x_vec
+
+        costFunction[i] = (np.abs(y) ** 2 - 1) ** 2
+        out[i] = y
+        H[i, :] = h
+
+    return out, h, costFunction, H
+
+
+@njit
 def time_varying_filter(x, H):
     """
     Implements the time-varying filter algorithm.
+
+    Parameters
+    ----------
+    x : ndarray
+        Input signal, a 1D array representing the signal to be filtered.
+    H : ndarray
+        Time-varying filter coefficients, a 2D array where each row represents the filter coefficients at a given time instant.
+
+    Returns
+    -------
+    ndarray
+        The filtered signal.
 
     """
     # Initialize the equalizer filter coefficients
