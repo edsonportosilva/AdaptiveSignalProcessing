@@ -162,7 +162,7 @@ def lms(x, d, Ntaps, μ):
         error = d[i] - y
 
         # Update the filter coefficients using the LMS update rule
-        h += μ * error * x_vec
+        h += 2 * μ * error * x_vec
 
         squaredError[i] = error**2
         out[i] = y
