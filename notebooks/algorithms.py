@@ -144,7 +144,7 @@ def lms(x, d, Ntaps, μ):
     """
     # Initialize the equalizer filter coefficients
     h = np.zeros(Ntaps, dtype=np.float64)
-    H = np.zeros((len(x) - Ntaps, Ntaps), dtype=np.float64)
+    H = np.zeros((len(x), Ntaps), dtype=np.float64)
     ind = np.arange(0, Ntaps)
 
     # Apply the LMS algorithm
@@ -206,7 +206,7 @@ def nlms(x, d, Ntaps, μ, γ=1e-6):
     """
     # Initialize the equalizer filter coefficients
     h = np.zeros((Ntaps, 1), dtype=np.float64)
-    H = np.zeros((len(x) - Ntaps, Ntaps), dtype=np.float64)
+    H = np.zeros((len(x), Ntaps), dtype=np.float64)
     ind = np.arange(0, Ntaps)
 
     # Apply the LMS algorithm
@@ -270,7 +270,7 @@ def lms_newton(x, d, Ntaps, μ, α):
     """
     # Initialize the equalizer filter coefficients
     h = np.zeros((Ntaps, 1), dtype=np.float64)
-    H = np.zeros((len(x) - Ntaps, Ntaps), dtype=np.float64)
+    H = np.zeros((len(x), Ntaps), dtype=np.float64)
     R_inv = 1e-3 * np.eye(Ntaps, dtype=np.float64)
 
     # Apply the LMS-Newton algorithm
@@ -345,7 +345,7 @@ def rls(x, d, Ntaps, λ):
     """
     # Initialize the equalizer filter coefficients
     h = np.zeros((Ntaps, 1), dtype=np.float64)
-    H = np.zeros((len(x) - Ntaps, Ntaps), dtype=np.float64)
+    H = np.zeros((len(x), Ntaps), dtype=np.float64)
     Rxx_inv = 1e-3 * np.eye(Ntaps, dtype=np.float64)
     pxd = np.zeros((Ntaps, 1), dtype=np.float64)
 
@@ -419,7 +419,7 @@ def rls_apriori(x, d, Ntaps, λ):
     """
     # Initialize the equalizer filter coefficients
     h = np.zeros((Ntaps, 1), dtype=np.float64)
-    H = np.zeros((len(x) - Ntaps, Ntaps), dtype=np.float64)
+    H = np.zeros((len(x), Ntaps), dtype=np.float64)
     P = 1e-3 * np.eye(Ntaps, dtype=np.float64)
 
     # Apply the LMS-Newton algorithm
@@ -483,7 +483,7 @@ def rls_aposteriori(x, d, Ntaps, λ):
     """
     # Initialize the equalizer filter coefficients
     h = np.zeros((Ntaps, 1), dtype=np.float64)
-    H = np.zeros((len(x) - Ntaps, Ntaps), dtype=np.float64)
+    H = np.zeros((len(x), Ntaps), dtype=np.float64)
     P = 1e-3 * np.eye(Ntaps, dtype=np.float64)
 
     # Apply the LMS-Newton algorithm
