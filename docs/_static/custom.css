@@ -1,0 +1,32 @@
+/* Didactic touches on top of the Furo theme */
+.admonition.objectives, .admonition.keyidea, .admonition.exercise,
+.admonition.pitfall {
+  border-left-width: 0.3rem;
+}
+.admonition.objectives { border-color: #2e8b57; }
+.admonition.objectives > .admonition-title { background: rgba(46, 139, 87, 0.12); }
+.admonition.objectives > .admonition-title::before { background-color: #2e8b57; }
+
+.admonition.keyidea { border-color: #1f5fa8; }
+.admonition.keyidea > .admonition-title { background: rgba(31, 95, 168, 0.12); }
+.admonition.keyidea > .admonition-title::before { background-color: #1f5fa8; }
+
+.admonition.exercise { border-color: #c77d00; }
+.admonition.exercise > .admonition-title { background: rgba(199, 125, 0, 0.12); }
+.admonition.exercise > .admonition-title::before { background-color: #c77d00; }
+
+.admonition.pitfall { border-color: #b3261e; }
+.admonition.pitfall > .admonition-title { background: rgba(179, 38, 30, 0.12); }
+.admonition.pitfall > .admonition-title::before { background-color: #b3261e; }
+
+details.solution {
+  border: 1px solid var(--color-background-border);
+  border-radius: 0.3rem;
+  padding: 0.4rem 0.8rem;
+  margin: 0.5rem 0 1rem 0;
+}
+details.solution > summary { cursor: pointer; font-weight: 600; }
+
+table.algorithm-table td, table.algorithm-table th { vertical-align: top; }
+.math-block-center { text-align: center; }
+div.plot-directive img, figure img { max-width: 100%; height: auto; }
