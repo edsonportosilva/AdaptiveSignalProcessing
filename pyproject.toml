@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "adaptive-signal-processing"
+version = "0.1.0"
+description = "Algorithms and course material for Adaptive Signal Processing (PPgEE/UFCG)"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+authors = [{ name = "Edson Porto da Silva" }]
+keywords = ["adaptive filtering", "signal processing", "LMS", "RLS", "Kalman filter", "education"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering",
+    "License :: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication",
+]
+dependencies = [
+    "numpy",
+    "scipy",
+    "numba",
+    "tqdm",
+    "matplotlib",
+    "sympy",
+    "ipython",
+]
+
+[project.optional-dependencies]
+notebooks = ["jupyterlab", "SciencePlots"]
+test = ["pytest"]
+docs = ["sphinx>=6", "furo"]
+dev = ["pytest", "sphinx>=6", "furo"]
+
+[project.urls]
+Homepage = "https://github.com/edsonportosilva/AdaptiveSignalProcessing"
+Issues = "https://github.com/edsonportosilva/AdaptiveSignalProcessing/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "src"]
+addopts = "-ra --doctest-modules"
